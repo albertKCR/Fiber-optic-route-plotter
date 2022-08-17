@@ -96,6 +96,8 @@ for i in circles[0,:]:
   elif rgb_pixel_value == (255, 170, 0):
     amarelo = amarelo+1
   counter = 1+counter
+
+
 print(counter)
 print(verde)
 print(vermelho)
