@@ -5,13 +5,13 @@ from PIL import Image
 import pyautogui
 import PIL.ImageGrab
 
-img = cv.imread(r'C:\Users\kirch\OneDrive\Documentos\img3.png')
+dic = r'C:\Users\kirch\OneDrive\Documentos\img2.png'
+img = cv.imread(dic)
 cv.imshow("x",img)
 
-##
 cor_para_amarelo = (255, 0, 0)
 
-im = Image.open(r'C:\Users\kirch\OneDrive\Documentos\img3.png').convert('RGB')
+im = Image.open(dic).convert('RGB')
 
 # Pega a imagem como um numpy.array com formato altura x largura x num_canais
 data = np.array(im)
@@ -26,7 +26,7 @@ data[condicao.T] = cor_para_amarelo
 # Volto o array para uma imagem do PIL
 im2 = Image.fromarray(data)
 im2.save("aaa.png")
-##
+
 
 img = cv.imread("aaa.png")
 cv.imshow("y",img)
@@ -77,18 +77,28 @@ img1 = cv.imread("img3.png")
 print("###")
 
 
-
-
-#print(grey[57,213])
-
-
 plt.imshow(cimg)
 
-
-for i in circles[0,:]:
-
-
-red_image = PIL.Image.open(r'C:\Users\kirch\OneDrive\Documentos\img3.png')
+red_image = PIL.Image.open(dic)
 red_image_rgb = red_image.convert("RGB")
-rgb_pixel_value = red_image_rgb.getpixel((57,213))
-print(rgb_pixel_value)
+counter = 0
+verde = 0
+vermelho = 0
+amarelo = 0
+print(circles[0,1])
+for i in circles[0,:]:
+  rgb_pixel_value = red_image_rgb.getpixel((i[0],i[1]))
+  print(rgb_pixel_value)
+  if rgb_pixel_value == (38, 115, 0):
+    verde = verde+1
+  elif rgb_pixel_value == (255, 0, 0):
+    vermelho = vermelho+1
+  elif rgb_pixel_value == (255, 170, 0):
+    amarelo = amarelo+1
+  counter = 1+counter
+print(counter)
+print(verde)
+print(vermelho)
+print(amarelo)
+postes_livre = amarelo+verde
+print(postes_livre)
