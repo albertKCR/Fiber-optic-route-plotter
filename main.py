@@ -5,7 +5,7 @@ from PIL import Image
 import pyautogui
 import PIL.ImageGrab
 
-dic = r'C:\Users\kirch\OneDrive\Documentos\img2.png'
+dic = r'img2.png'
 img = cv.imread(dic)
 cv.imshow("x",img)
 
@@ -98,9 +98,9 @@ for i in circles[0,:]:
   counter = 1+counter
 
 
-print(counter)
-print(verde)
-print(vermelho)
-print(amarelo)
+print("Número de postes:", counter)
+print("Número de postes em verde:", verde)
+print("Número de postes em vermelho:", vermelho)
+print("Número de postes em amarelo:", amarelo)
 postes_livre = amarelo+verde
-print(postes_livre)
+print("Postes livres (amarelo e verde):", postes_livre)
