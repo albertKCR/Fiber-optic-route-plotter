@@ -6,7 +6,7 @@ import pyautogui
 import PIL.ImageGrab
 import math
 
-dic = r'img2.png'
+dic = r'iamgems.png'
 img = cv.imread(dic)
 #cv.imshow("x",img)
 
@@ -134,9 +134,10 @@ print("Número de postes em vermelho:", vermelho)
 print("Número de postes em amarelo:", amarelo)
 print("Postes livres (amarelo e verde):", postes_livre)
 
+plt.axis("off")
 plt.imshow(im)
 plt.plot([18,45],[42,54])
-plt.show()
+plt.savefig('foo.png', bbox_inches='tight', transparent = True)
 print(type(circles))
 print(math.dist([18,45],[42,54]))
 
