@@ -1,3 +1,4 @@
+from calendar import c
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -71,8 +72,8 @@ for i in circles[0,:]:
     # draw the center of the circle
     cv.circle(cimg,(i[0],i[1]),2,(255,0,0),10)
 
-for i in circles[0,:]:
-  print(i)
+#for i in circles[0,:]:
+  #print(i)
 
 
 #img1 = cv.imread("img3.png")
@@ -93,7 +94,7 @@ amarelo = 0
 
 for i in circles[0,:]:
   rgb_pixel_value = red_image_rgb.getpixel((i[0],i[1]))
-  print(rgb_pixel_value)
+  #print(rgb_pixel_value)
   if rgb_pixel_value == (38, 115, 0):
     verde = verde+1
   elif rgb_pixel_value == (255, 0, 0):
@@ -134,30 +135,46 @@ print("Número de postes em vermelho:", vermelho)
 print("Número de postes em amarelo:", amarelo)
 print("Postes livres (amarelo e verde):", postes_livre)
 
-plt.axis("off")
-plt.plot([18,45],[42,54])
-plt.imshow(im)
-plt.show()
-plt.savefig('foo.png', bbox_inches='tight', transparent = True)
-print(type(circles))
-print(math.dist([18,45],[42,54]))
+#plt.axis("off")
+#plt.plot([18,45],[42,54])
+#plt.imshow(im)
+#plt.show()
+#plt.savefig('foo.png', bbox_inches='tight', transparent = True)
+#print(type(circles))
+#print(math.dist([18,45],[42,54]))
 
 
 #for i in info[0][:]:
 #  print(i[0])
 
-mais_perto=999
+plt.axis("off")
+
 for i in info[0][:]:
-  j=i+1
+  mais_perto=999999
   for j in info[0][:]:
-    if math.dist([i[0],j[0]],[i[1],j[1]])<mais_perto and i[0]!=j[0] and i[1]!=j[1]:
-      mais_perto=math.dist([i[0],j[0]],[i[1],j[1]])
+    if (math.dist([i[0],i[1]],[j[0],j[1]])<mais_perto) and [i[0],i[1]]!=[j[0],j[1]] and math.dist([i[0],i[1]],[j[0],j[1]])<80:
+      mais_perto=math.dist([i[0],i[1]],[j[0],j[1]])
       x_1=i[0]
       x_2=j[0]
       y_1=i[1]
       y_2=j[1]
-print(mais_perto)
-print(x_1)
-print(x_2)
-print(y_1)
-print(y_2)
+      print("dentro")
+      #print("###",mais_perto,"###")
+    print("iterou")
+  plt.plot([x_1,x_2],[y_1,y_2])
+
+  #print(mais_perto)
+  #print(x_1,y_1)
+  #print(x_2,y_2)
+  print([x_1,y_1],[x_2,y_2])
+  print("fora")
+  print("###",mais_perto,"###")
+
+plt.imshow(im)
+plt.show()
+#print(x_1)
+#print(x_2)
+#print(y_1)
+#print(y_2)
+#for i in info[0][:]:
+#  print(i)
