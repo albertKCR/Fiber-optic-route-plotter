@@ -9,51 +9,41 @@ import math
 
 dic = r'img2.png'
 img = cv.imread(dic)
-#cv.imshow("x",img)
-
-
-cor_para_amarelo = (255, 0, 0)
 
 im = Image.open(dic).convert('RGB')
-#plt.imshow(im)
-#plt.show()
 
-# Pega a imagem como um numpy.array com formato altura x largura x num_canais
+#take the image as a numpy.array with the format: height x width x channel_number
 data = np.array(im)
 
-vermelho, verde, azul = data.T
+#the yellow don't work so well to recognize his coordinate, so replace by red
+red, green, blue = data.T
 
-# Defino a condição (ser branco)
-condicao = (vermelho >= 200) & (verde >= 150) & (azul <= 50)
-# Substitui a cor branca pela cor desejada
-data[condicao.T] = cor_para_amarelo
+yellowToRed = (255, 0, 0)
+condition = (red >= 200) & (green >= 150) & (blue <= 50)
+#replace the yellow from the image to red
+data[condition.T] = yellowToRed
 
-# Volto o array para uma imagem do PIL
+#return the array to a PIL image
 im2 = Image.fromarray(data)
-im2.save("seeYellow.png")
+im2.save("yellowToRed.png")
+img = cv.imread("yellowToRed.png")
 
 
-img = cv.imread("seeYellow.png")
-#cv.imshow("y",img)
-
+#------------------------------------------------
+#treatment of the image to recognize the circles
+#swap the RGB for gray
 grey = cv.cvtColor(img, cv.COLOR_BGRA2GRAY)
-#plt.imshow(grey,cmap="gray")
-#plt.show()
-
 
 kernel = np.ones((2,2),np.uint8)
-# Blurring and erasing little details
+#blurring and erasing little details
 grey = cv.GaussianBlur(grey,(9,9),0)
 grey = cv.morphologyEx(grey, cv.MORPH_OPEN, kernel)
 grey = cv.morphologyEx(grey, cv.MORPH_CLOSE, kernel)
-#plt.imshow(grey,cmap="gray")
-#plt.show()
 
+#finally the image is just white circles with black background
 canny = cv.Canny(grey,170,200)
-#plt.imshow(canny,cmap="gray")
-#plt.show()
 
-
+#recognize the circles e store the coordinates in the "circles" variable
 circles = cv.HoughCircles(canny,
                           cv.HOUGH_GRADIENT,
                           dp=1.1,
@@ -63,118 +53,72 @@ circles = cv.HoughCircles(canny,
                           minRadius=0,
                           maxRadius=10)
 
+#number of found circles
 print(len(circles[0]))
 
-# Changing the dtype  to int
+#changing the dtype  to int
 circles = np.uint16(np.around(circles))
 cimg = canny.copy()
 for i in circles[0,:]:
-    # draw the center of the circle
+    #draw the center of the circle
     cv.circle(cimg,(i[0],i[1]),2,(255,0,0),10)
-
-#for i in circles[0,:]:
-  #print(i)
+#------------------------------------------------
 
 
-#img1 = cv.imread("img3.png")
+#from the coordinates of the circles will happen the color recognize
+image = PIL.Image.open(dic)
+image_rgb = image.convert("RGB")
 
+postsCounter = 0
+greenPostsCounter = 0
+redPostsCounter = 0
+yellowPostsCounter = 0
 
-print("###")
-
-
-#plt.imshow(cimg)
-
-red_image = PIL.Image.open(dic)
-red_image_rgb = red_image.convert("RGB")
-counter = 0
-verde = 0
-vermelho = 0
-amarelo = 0
-
+coordinates = [] #store the coordinates of each circle
+colorInfo = [] #store de color of each circle (as long as it is green, yellow or red)
+freePostCounter = 0
 
 for i in circles[0,:]:
-  rgb_pixel_value = red_image_rgb.getpixel((i[0],i[1]))
+  #Reconhece a cor em RGB da coordenada e armazena em "rgb_pixel_value"
+  rgb_pixel_value = image_rgb.getpixel((i[0],i[1]))
   #print(rgb_pixel_value)
-  if rgb_pixel_value == (38, 115, 0):
-    verde = verde+1
-  elif rgb_pixel_value == (255, 0, 0):
-    vermelho = vermelho+1
-  elif rgb_pixel_value == (255, 170, 0):
-    amarelo = amarelo+1
-  counter = 1+counter
-
-postes_livre = amarelo+verde
-
-#info[0,x]=coordenada, info[1,x]=cor
-info = []
-for y in range(2):
-  linha = []
-  for x in range(postes_livre):
-    linha.append(0)
-  info.append(linha)
-aux1 = 0
-for i in circles[0,:]:
-  rgb_pixel_value = red_image_rgb.getpixel((i[0],i[1]))
-  print(rgb_pixel_value)
-  if rgb_pixel_value == (38, 115, 0):
-    verde = verde+1
-  elif rgb_pixel_value == (255, 0, 0):
-    vermelho = vermelho+1
-  elif rgb_pixel_value == (255, 170, 0):
-    amarelo = amarelo+1
+  if rgb_pixel_value == (38, 115, 0): #count the number of green posts
+    greenPostsCounter = greenPostsCounter+1
+  elif rgb_pixel_value == (255, 0, 0): #count the number of red posts
+    redPostsCounter = redPostsCounter+1
+  elif rgb_pixel_value == (255, 170, 0): #count the number of yellow posts
+    yellowPostsCounter = yellowPostsCounter+1
   if (rgb_pixel_value == (255, 170, 0)) or (rgb_pixel_value == (38, 115, 0)):
-    info[0][aux1] = i
-    info[1][aux1] = rgb_pixel_value
-    aux1 = aux1+1
-  counter = 1+counter
+    #if the color of the post is yellow or green, the coordinate and color is appended in the correspondent array
+    coordinates.append(i)
+    colorInfo.append(rgb_pixel_value)
+    freePostCounter = freePostCounter+1
+  postsCounter = 1+postsCounter
+
+freePosts = yellowPostsCounter+greenPostsCounter
 
 
-print("Número de postes:", counter)
-print("Número de postes em verde:", verde)
-print("Número de postes em vermelho:", vermelho)
-print("Número de postes em amarelo:", amarelo)
-print("Postes livres (amarelo e verde):", postes_livre)
-
-#plt.axis("off")
-#plt.plot([18,45],[42,54])
-#plt.imshow(im)
-#plt.show()
-#plt.savefig('foo.png', bbox_inches='tight', transparent = True)
-#print(type(circles))
-#print(math.dist([18,45],[42,54]))
-
-
-#for i in info[0][:]:
-#  print(i[0])
+print("Number of posts:", postsCounter)
+print("Number of green posts:", greenPostsCounter)
+print("Number of red posts:", redPostsCounter)
+print("Number of yellow posts:", yellowPostsCounter)
+print("Number of free posts (yellow and green):", freePostCounter)
 
 plt.axis("off")
 
-for i in info[0][:]:
-  mais_perto=999999
-  for j in info[0][:]:
-    if (math.dist([i[0],i[1]],[j[0],j[1]])<mais_perto) and [i[0],i[1]]!=[j[0],j[1]] and math.dist([i[0],i[1]],[j[0],j[1]])<80:
-      mais_perto=math.dist([i[0],i[1]],[j[0],j[1]])
+#each circle will iterate with all the others and check the circle that have the shorter distance (as long as it is shorter then 80)
+for i in coordinates[:]:
+  shorterDistance = 999999
+  for j in coordinates[:]:
+    if (math.dist([i[0],i[1]],[j[0],j[1]])<shorterDistance) and [i[0],i[1]]!=[j[0],j[1]] and math.dist([i[0],i[1]],[j[0],j[1]])<80:
+      shorterDistance=math.dist([i[0],i[1]],[j[0],j[1]])
       x_1=i[0]
       x_2=j[0]
       y_1=i[1]
       y_2=j[1]
-      print("dentro")
-      #print("###",mais_perto,"###")
-    print("iterou")
-  plt.plot([x_1,x_2],[y_1,y_2])
-
-  #print(mais_perto)
-  #print(x_1,y_1)
-  #print(x_2,y_2)
-  print([x_1,y_1],[x_2,y_2])
-  print("fora")
-  print("###",mais_perto,"###")
+  #draw a line between the 2 posts
+  plt.plot([x_1,x_2],[y_1,y_2], 'b')
 
 plt.imshow(im)
+plt.savefig("im.png", transparent = True) 
 plt.show()
-#print(x_1)
-#print(x_2)
-#print(y_1)
-#print(y_2)
-#for i in info[0][:]:
-#  print(i)
