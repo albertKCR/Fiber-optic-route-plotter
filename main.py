@@ -1,4 +1,3 @@
-from calendar import c
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,7 +14,7 @@ im = Image.open(dic).convert('RGB')
 #take the image as a numpy.array with the format: height x width x channel_number
 data = np.array(im)
 
-#the yellow don't work so well to recognize his coordinate, so replace by red
+#the yellow don't work so well to the image treatment, so replace by red
 red, green, blue = data.T
 
 yellowToRed = (255, 0, 0)
@@ -29,8 +28,8 @@ im2.save("yellowToRed.png")
 img = cv.imread("yellowToRed.png")
 
 
-#------------------------------------------------
 #treatment of the image to recognize the circles
+#------------------------------------------------
 #swap the RGB for gray
 grey = cv.cvtColor(img, cv.COLOR_BGRA2GRAY)
 
@@ -109,6 +108,7 @@ plt.axis("off")
 #each circle will iterate with all the others and check the circle that have the shorter distance (as long as it is shorter then 80)
 for i in coordinates[:]:
   shorterDistance = 999999
+  shorterDistance2 = 999999
   for j in coordinates[:]:
     if (math.dist([i[0],i[1]],[j[0],j[1]])<shorterDistance) and [i[0],i[1]]!=[j[0],j[1]] and math.dist([i[0],i[1]],[j[0],j[1]])<80:
       shorterDistance=math.dist([i[0],i[1]],[j[0],j[1]])
@@ -116,9 +116,16 @@ for i in coordinates[:]:
       x_2=j[0]
       y_1=i[1]
       y_2=j[1]
-  #draw a line between the 2 posts
+    if (math.dist([i[0],i[1]],[j[0],j[1]])<shorterDistance2) and [i[0],i[1]]!=[j[0],j[1]] and math.dist([i[0],i[1]],[j[0],j[1]])<80 and (math.dist([i[0],i[1]],[j[0],j[1]])>shorterDistance):
+      shorterDistance2=math.dist([i[0],i[1]],[j[0],j[1]])
+      x1_1=i[0]
+      x1_2=j[0]
+      y1_1=i[1]
+      y1_2=j[1]
+  #draw a line between the 2 points
   plt.plot([x_1,x_2],[y_1,y_2], 'b')
+  plt.plot([x1_1,x1_2],[y1_1,y1_2], 'r')
 
 plt.imshow(im)
-plt.savefig("im.png", transparent = True) 
+plt.savefig("FinalImage.png", transparent = True) 
 plt.show()
