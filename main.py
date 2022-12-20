@@ -6,7 +6,7 @@ import pyautogui
 import PIL.ImageGrab
 import math
 
-dic = r'img2.png'
+dic = r'inputImage.png'
 img = cv.imread(dic)
 
 im = Image.open(dic).convert('RGB')
@@ -127,5 +127,5 @@ for i in coordinates[:]:
   plt.plot([x1_1,x1_2],[y1_1,y1_2], 'r')
 
 plt.imshow(im)
-plt.savefig("FinalImage.png", transparent = True) 
+plt.savefig("outputImage.png", transparent = True) 
 plt.show()
